@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+        // ฟังก์ชันเพื่อตรวจสอบสถานะการเข้าสู่ระบบ
+        function checkSession() {
+            fetch('check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.loggedIn) {
+                        // ถ้าไม่เข้าสู่ระบบ เปลี่ยนเส้นทางไปยังหน้า login
+                        window.location.href = 'login.php';
+                    } else {
+                        // กรอกข้อมูล username ในฟิลด์ของแบบฟอร์ม
+                        document.querySelector('input[name="username"]').value = data.username;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
+        document.addEventListener('DOMContentLoaded', checkSession);
+    </script>
+</head>
+<body>
+    <div class="user-info-modal">
+        <div class="modal-content">
+            <h2 class="modal-header">Enter your chat code</h2>
+            <form class="user-info-form">
+                <input name="username" type="text" required placeholder="Username" />
+                <input name="chatCode" required placeholder="Chat Code" />
+                <button type="submit" class="button join-button">Join</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <h2 class="chat-header">Who's chatting...</h2>
+        <div class="chat-messages"></div>
+        <form class="chat-input-form">
+            <input type="text" class="chat-input" required placeholder="Type here..." />
+            <input type="file" class="file-input" accept="image/*" />
+            <button type="submit" class="button send-button">Send</button>
+        </form>
+        <button class="button clear-chat-button">Clear Chat</button>
+    </div>
+
+    <script src="app.js"></script>
+
+    <script>
+        // Capture the chat code from URL parameters
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const chatCode = params.get('chatCode');
+
+            // Fill in the chat code field if it exists
+            if (chatCode) {
+                document.querySelector('input[name="chatCode"]').value = chatCode;
+            }
+        });
+    </script>
+</body>
+</html>
